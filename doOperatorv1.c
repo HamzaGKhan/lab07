@@ -11,6 +11,7 @@
 #include "lexical.h"
 
 struct lexToken *token;
+
 static int op_quit(struct tokenStack *stack);
 static int op_print(struct tokenStack *stack);
 static int op_dump(struct tokenStack *stack);
@@ -47,29 +48,32 @@ static struct operator_struct {
   {"MOD", op_rem},
   {(char *)NULL, (int(*)(struct tokenStack *)) NULL}
 };
-char *my_itoa(int num, char *str)
-{
-        if(str == NULL)
-        {
-                return NULL;
-        }
-        sprintf(str, "%d", num);
-        return str;
-}
+
+
 /* YOU WRITE THIS */
 static int popInt(struct tokenStack *s)
 {
-  token  = popTokenStack(s);
-  return atoi(token->symbol);
+  int result = 0;
+  if(s->top == 0) {
+    fprintf(stderr,"popTokenStack: popping an empty stack, aborting\n");
+    exit(1);
+  }
+  else{
+    result =atoi(popTokenStack(s)->symbol);
+  }
+  return result;
 }
 
 /* YOU WRITE THIS */
 static void pushInt(struct tokenStack *s, int v)
 {
-    token = allocToken();
-    sprintf(token->symbol,"%d", v);
-    token->kind = LEX_TOKEN_NUMBER;
-    pushTokenStack(s , token); 
+  token = allocToken();
+  token->kind = LEX_TOKEN_NUMBER;
+  
+  sprintf(token->symbol, "%d", v);
+  pushTokenStack(s,token);  
+
+  op_print(s);
 }
 
 int doOperator(struct tokenStack *stack, char *o) 
